@@ -5,7 +5,8 @@ const canvasDim = canvas.getBoundingClientRect();
 const gridSize = 4;
 const tileSize = 150;
 //let grid = [];
-let grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
+//let grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
+let grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 0, 0, 1]];
 
 $(() => {
     init();
@@ -57,3 +58,39 @@ function drawGrid(grid) {
         }
     }
 }
+
+$("body").on("keydown", (event) => {
+    if (event.keyCode == 37) { // left arrow
+        console.log("Left shift");
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 1; j < gridSize; j++) {
+                if (grid[i][j] != 0) {
+                    let furthest = j;
+                    for (let k = j - 1; k >= 0; k--) {
+                        if (grid[i][k] == 0) {
+                            furthest = k;
+                        }
+                        else if (grid[i][k] == grid[i][j]) {
+                            console.log("combine!");
+                            break;
+                        }
+                        else break;
+                    }
+                    let temp = grid[i][j];
+                    grid[i][j] = grid[i][furthest];
+                    grid[i][furthest] = temp;
+                }
+            }
+        }
+    }
+    else if (event.keyCode == 38) { // up arrow
+        console.log("Up shift");
+    }
+    else if (event.keyCode == 39) { // right arrow
+        console.log("Right shift");
+    }
+    else if (event.keyCode == 40) { // down arrow
+        console.log("Down shift");
+    }
+    drawGrid(grid);
+});
