@@ -6,7 +6,7 @@ const gridSize = 4;
 const tileSize = 150;
 //let grid = [];
 //let grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
-let grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 0, 0, 1]];
+let grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
 
 $(() => {
     init();
@@ -65,20 +65,23 @@ $("body").on("keydown", (event) => {
         for (let i = 0; i < gridSize; i++) {
             for (let j = 1; j < gridSize; j++) {
                 if (grid[i][j] != 0) {
-                    let furthest = j;
+                    let move = j;
                     for (let k = j - 1; k >= 0; k--) {
                         if (grid[i][k] == 0) {
-                            furthest = k;
+                            move = k;
                         }
                         else if (grid[i][k] == grid[i][j]) {
                             console.log("combine!");
+                            grid[i][j]++;
+                            grid[i][k] = 0;
+                            move = k;
                             break;
                         }
                         else break;
                     }
                     let temp = grid[i][j];
-                    grid[i][j] = grid[i][furthest];
-                    grid[i][furthest] = temp;
+                    grid[i][j] = grid[i][move];
+                    grid[i][move] = temp;
                 }
             }
         }
@@ -88,20 +91,23 @@ $("body").on("keydown", (event) => {
         for (let j = 0; j < gridSize; j++) {
             for (let i = 1; i < gridSize; i++) {
                 if (grid[i][j] != 0) {
-                    let furthest = i;
+                    let move = i;
                     for (let k = i - 1; k >= 0; k--) {
                         if (grid[k][j] == 0) {
-                            furthest = k;
+                            move = k;
                         }
                         else if (grid[k][j] == grid[i][j]) {
                             console.log("combine!");
+                            grid[i][j]++;
+                            grid[k][j] = 0;
+                            move = k;
                             break;
                         }
                         else break;
                     }
                     let temp = grid[i][j];
-                    grid[i][j] = grid[furthest][j];
-                    grid[furthest][j] = temp;
+                    grid[i][j] = grid[move][j];
+                    grid[move][j] = temp;
                 }
             }
         }
@@ -111,20 +117,23 @@ $("body").on("keydown", (event) => {
         for (let i = 0; i < gridSize; i++) {
             for (let j = gridSize - 1; j >= 0; j--) {
                 if (grid[i][j] != 0) {
-                    let furthest = j;
+                    let move = j;
                     for (let k = j + 1; k < gridSize; k++) {
                         if (grid[i][k] == 0) {
-                            furthest = k;
+                            move = k;
                         }
                         else if (grid[i][k] == grid[i][j]) {
                             console.log("combine!");
+                            grid[i][j]++;
+                            grid[i][k] = 0;
+                            move = k;
                             break;
                         }
                         else break;
                     }
                     let temp = grid[i][j];
-                    grid[i][j] = grid[i][furthest];
-                    grid[i][furthest] = temp;
+                    grid[i][j] = grid[i][move];
+                    grid[i][move] = temp;
                 }
             }
         }
@@ -134,20 +143,23 @@ $("body").on("keydown", (event) => {
         for (let j = 0; j < gridSize; j++) {
             for (let i = gridSize - 1; i >= 0; i--) {
                 if (grid[i][j] != 0) {
-                    let furthest = i;
+                    let move = i;
                     for (let k = i + 1; k < gridSize; k++) {
                         if (grid[k][j] == 0) {
-                            furthest = k;
+                            move = k;
                         }
                         else if (grid[k][j] == grid[i][j]) {
                             console.log("combine!");
+                            grid[i][j]++;
+                            grid[k][j] = 0;
+                            move = k;
                             break;
                         }
                         else break;
                     }
                     let temp = grid[i][j];
-                    grid[i][j] = grid[furthest][j];
-                    grid[furthest][j] = temp;
+                    grid[i][j] = grid[move][j];
+                    grid[move][j] = temp;
                 }
             }
         }
