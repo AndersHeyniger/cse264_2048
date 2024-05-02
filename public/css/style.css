@@ -17,6 +17,10 @@ html {
   line-height: 1.4;
 }
 
+body {
+  background-color: #b3d4fc;
+}
+
 #container {
   height: 800px;
   width: 100%;
@@ -32,7 +36,7 @@ html {
 #board {
   margin-left: 20%;
   margin-right: 5%;
-  background-color: #b3d4fc;
+  background-color: #fff;
   float: right;
 }
 
