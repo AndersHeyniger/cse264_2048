@@ -3,11 +3,12 @@ const ctx = canvas.getContext("2d");
 const canvasDim = canvas.getBoundingClientRect();
 
 const gridSize = 4;
-const tileSize = 150;
+const tileSize = canvas.offsetWidth / gridSize;
 const spawn2 = true;
 const spawn4 = true;
 const spawn8 = false;
 let grid;
+let oldgrid;
 
 
 $(() => {
@@ -17,9 +18,11 @@ $(() => {
 function init() {
     //grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
     //grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
-    grid = [[1, 1, 2, 3], [3, 1, 1, 2], [1, 1, 1, 1], [0, 0, 0, 0]];
-    //grid = makeGrid();
+    //grid = [[1, 1, 2, 3], [3, 1, 1, 2], [1, 1, 1, 1], [0, 0, 0, 0]];
+    grid = makeGrid();
+    oldgrid = makeGrid();
     placeRandTile(grid);
+    copyGrid(oldgrid, grid);
     drawGrid(grid);
 }
 
@@ -96,7 +99,9 @@ function placeRandTile(grid) {
 
 $("body").on("keydown", (event) => {
     let change = false;
+    
     if (event.keyCode == 37) { // left arrow
+        copyGrid(oldgrid, grid);
         console.log("Left shift");
         for (let i = 0; i < gridSize; i++) {
             let maxMove = 0;
@@ -120,14 +125,17 @@ $("body").on("keydown", (event) => {
                         }
                         else break;
                     }
-                    let temp = grid[i][j];
-                    grid[i][j] = grid[i][move];
-                    grid[i][move] = temp;
+                    if (change) {
+                        let temp = grid[i][j];
+                        grid[i][j] = grid[i][move];
+                        grid[i][move] = temp;
+                    }
                 }
             }
         }
     }
     else if (event.keyCode == 38) { // up arrow
+        copyGrid(oldgrid, grid);
         console.log("Up shift");
         for (let j = 0; j < gridSize; j++) {
             for (let i = 1; i < gridSize; i++) {
@@ -149,14 +157,17 @@ $("body").on("keydown", (event) => {
                         }
                         else break;
                     }
-                    let temp = grid[i][j];
-                    grid[i][j] = grid[move][j];
-                    grid[move][j] = temp;
+                    if (change) {
+                        let temp = grid[i][j];
+                        grid[i][j] = grid[move][j];
+                        grid[move][j] = temp;
+                    }
                 }
             }
         }
     }
     else if (event.keyCode == 39) { // right arrow
+        copyGrid(oldgrid, grid);
         console.log("Right shift");
         for (let i = 0; i < gridSize; i++) {
             for (let j = gridSize - 1; j >= 0; j--) {
@@ -178,14 +189,17 @@ $("body").on("keydown", (event) => {
                         }
                         else break;
                     }
-                    let temp = grid[i][j];
-                    grid[i][j] = grid[i][move];
-                    grid[i][move] = temp;
+                    if (change) {
+                        let temp = grid[i][j];
+                        grid[i][j] = grid[i][move];
+                        grid[i][move] = temp;
+                    }
                 }
             }
         }
     }
     else if (event.keyCode == 40) { // down arrow
+        copyGrid(oldgrid, grid);
         console.log("Down shift");
         for (let j = 0; j < gridSize; j++) {
             for (let i = gridSize - 1; i >= 0; i--) {
@@ -207,13 +221,30 @@ $("body").on("keydown", (event) => {
                         }
                         else break;
                     }
-                    let temp = grid[i][j];
-                    grid[i][j] = grid[move][j];
-                    grid[move][j] = temp;
+                    if (change) {
+                        let temp = grid[i][j];
+                        grid[i][j] = grid[move][j];
+                        grid[move][j] = temp;
+                    }
                 }
             }
         }
     }
-    if (change) placeRandTile(grid);
-    drawGrid(grid);
+    else if (event.keyCode == 82) {
+        console.log("Undo action");
+        copyGrid(grid, oldgrid);
+        drawGrid(grid);
+    }
+    if (change) {
+        placeRandTile(grid);
+        drawGrid(grid);
+    }
 });
+
+function copyGrid(dest, source) {
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            dest[i][j] = source[i][j];
+        }
+    }
+}
