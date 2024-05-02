@@ -2,7 +2,7 @@ const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
 const canvasDim = canvas.getBoundingClientRect();
 
-const gridSize = 4;
+const gridSize = 5;
 const tileSize = canvas.offsetWidth / gridSize;
 const spawn2 = true;
 const spawn4 = true;
@@ -138,10 +138,11 @@ $("body").on("keydown", (event) => {
         copyGrid(oldgrid, grid);
         console.log("Up shift");
         for (let j = 0; j < gridSize; j++) {
+            let maxMove = 0;
             for (let i = 1; i < gridSize; i++) {
                 if (grid[i][j] != 0) {
                     let move = i;
-                    for (let k = i - 1; k >= 0; k--) {
+                    for (let k = i - 1; k >= maxMove; k--) {
                         if (grid[k][j] == 0) {
                             change = true;
                             move = k;
@@ -151,6 +152,7 @@ $("body").on("keydown", (event) => {
                             grid[i][j]++;
                             change = true;
                             grid[k][j] = 0;
+                            maxMove = k + 1;
                             move = k;
                             console.log(`${2**grid[i][j]} tile formed`);
                             break;
@@ -170,10 +172,11 @@ $("body").on("keydown", (event) => {
         copyGrid(oldgrid, grid);
         console.log("Right shift");
         for (let i = 0; i < gridSize; i++) {
+            let maxMove = gridSize;
             for (let j = gridSize - 1; j >= 0; j--) {
                 if (grid[i][j] != 0) {
                     let move = j;
-                    for (let k = j + 1; k < gridSize; k++) {
+                    for (let k = j + 1; k < maxMove; k++) {
                         if (grid[i][k] == 0) {
                             change = true;
                             move = k;
@@ -183,6 +186,7 @@ $("body").on("keydown", (event) => {
                             change = true;
                             grid[i][j]++;
                             grid[i][k] = 0;
+                            maxMove = k - 2;
                             move = k;
                             console.log(`${2**grid[i][j]} tile formed`);
                             break;
@@ -202,10 +206,11 @@ $("body").on("keydown", (event) => {
         copyGrid(oldgrid, grid);
         console.log("Down shift");
         for (let j = 0; j < gridSize; j++) {
+            let maxMove = gridSize;
             for (let i = gridSize - 1; i >= 0; i--) {
                 if (grid[i][j] != 0) {
                     let move = i;
-                    for (let k = i + 1; k < gridSize; k++) {
+                    for (let k = i + 1; k < maxMove; k++) {
                         if (grid[k][j] == 0) {
                             change = true;
                             move = k;
@@ -215,6 +220,7 @@ $("body").on("keydown", (event) => {
                             change = true;
                             grid[i][j]++;
                             grid[k][j] = 0;
+                            maxMove = k - 2;
                             move = k;
                             console.log(`${2**grid[i][j]} tile formed`);
                             break;
