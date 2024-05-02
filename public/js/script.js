@@ -7,26 +7,29 @@ const tileSize = 150;
 const spawn2 = true;
 const spawn4 = true;
 const spawn8 = false;
-//let grid = [];
+let grid;
 //let grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
-let grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
+//let grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
 
 $(() => {
     init();
 });
 
 function init() {
-    //makeGrid(grid);
+    grid = makeGrid();
+    placeRandTile(grid);
     drawGrid(grid);
 }
 
-function makeGrid(grid) {
+function makeGrid() {
+    let grid = [];
     for (let i = 0; i < gridSize; i++) {
         grid.push([]);
         for (let j = 0; j < gridSize; j++) {
             grid[i].push(0);
         }
     }
+    return grid;
 }
 
 function drawGrid(grid) {
@@ -63,13 +66,25 @@ function drawGrid(grid) {
 }
 
 function placeRandTile(grid) {
-    let
+    let rand = Math.random();
+    let tile = 1;
     if (spawn2) {
-
+         if (rand < 0.75) tile = 1;
+         else if (spawn4) tile = 2;
     }
+    else tile = 2;
+    let row = Math.floor(Math.random() * gridSize);
+    let col = Math.floor(Math.random() * gridSize);
+    while (grid[row][col] != 0) {
+        row = Math.floor(Math.random() * gridSize);
+        col = Math.floor(Math.random() * gridSize);
+    }
+    grid[row][col] = tile;
+    console.log(`${2**tile} placed at (${row}, ${col})`);
 }
 
 $("body").on("keydown", (event) => {
+    let change = false;
     if (event.keyCode == 37) { // left arrow
         console.log("Left shift");
         for (let i = 0; i < gridSize; i++) {
@@ -78,13 +93,16 @@ $("body").on("keydown", (event) => {
                     let move = j;
                     for (let k = j - 1; k >= 0; k--) {
                         if (grid[i][k] == 0) {
+                            change = true;
                             move = k;
                         }
                         else if (grid[i][k] == grid[i][j]) {
-                            console.log("combine!");
+                            console.log(`Tiles at (${i}, ${j}) and (${i}, ${k}) combined`);
+                            change = true;
                             grid[i][j]++;
                             grid[i][k] = 0;
                             move = k;
+                            console.log(`${2**grid[i][j]} tile formed`);
                             break;
                         }
                         else break;
@@ -104,13 +122,16 @@ $("body").on("keydown", (event) => {
                     let move = i;
                     for (let k = i - 1; k >= 0; k--) {
                         if (grid[k][j] == 0) {
+                            change = true;
                             move = k;
                         }
                         else if (grid[k][j] == grid[i][j]) {
-                            console.log("combine!");
+                            console.log(`Tiles at (${i}, ${j}) and (${k}, ${j}) combined`);
                             grid[i][j]++;
+                            change = true;
                             grid[k][j] = 0;
                             move = k;
+                            console.log(`${2**grid[i][j]} tile formed`);
                             break;
                         }
                         else break;
@@ -130,13 +151,16 @@ $("body").on("keydown", (event) => {
                     let move = j;
                     for (let k = j + 1; k < gridSize; k++) {
                         if (grid[i][k] == 0) {
+                            change = true;
                             move = k;
                         }
                         else if (grid[i][k] == grid[i][j]) {
-                            console.log("combine!");
+                            console.log(`Tiles at (${i}, ${j}) and (${i}, ${k}) combined`);
+                            change = true;
                             grid[i][j]++;
                             grid[i][k] = 0;
                             move = k;
+                            console.log(`${2**grid[i][j]} tile formed`);
                             break;
                         }
                         else break;
@@ -156,13 +180,16 @@ $("body").on("keydown", (event) => {
                     let move = i;
                     for (let k = i + 1; k < gridSize; k++) {
                         if (grid[k][j] == 0) {
+                            change = true;
                             move = k;
                         }
                         else if (grid[k][j] == grid[i][j]) {
-                            console.log("combine!");
+                            console.log(`Tiles at (${i}, ${j}) and (${k}, ${j}) combined`);
+                            change = true;
                             grid[i][j]++;
                             grid[k][j] = 0;
                             move = k;
+                            console.log(`${2**grid[i][j]} tile formed`);
                             break;
                         }
                         else break;
@@ -174,5 +201,6 @@ $("body").on("keydown", (event) => {
             }
         }
     }
+    if (change) placeRandTile(grid);
     drawGrid(grid);
 });
