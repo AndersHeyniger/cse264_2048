@@ -4,6 +4,9 @@ const canvasDim = canvas.getBoundingClientRect();
 
 const gridSize = 4;
 const tileSize = 150;
+const spawn2 = true;
+const spawn4 = true;
+const spawn8 = false;
 //let grid = [];
 //let grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
 let grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
@@ -56,6 +59,13 @@ function drawGrid(grid) {
                 ctx.strokeRect(j * tileSize, i * tileSize, tileSize, tileSize);
             }
         }
+    }
+}
+
+function placeRandTile(grid) {
+    let
+    if (spawn2) {
+
     }
 }
 
