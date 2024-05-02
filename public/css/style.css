@@ -17,6 +17,38 @@ html {
   line-height: 1.4;
 }
 
+#container {
+  height: 800px;
+  width: 100%;
+}
+
+#game_div {
+  margin-top: 5%;
+  width: 60%;
+  float: left;
+  height: 75%;
+}
+
+#board {
+  margin-left: 20%;
+  margin-right: 5%;
+  background-color: #b3d4fc;
+  float: right;
+}
+
+#options {
+  float: right;
+  margin-top: 5%;
+  width: 40%;
+  height: 75%;
+  background-color: bisque;
+
+}
+
+
+
+
+
 /*
  * Remove text-shadow in selection highlight:
  * https://twitter.com/miketaylr/status/12228805301
@@ -172,9 +204,9 @@ textarea {
 }
 
 @media print,
-  (-webkit-min-device-pixel-ratio: 1.25),
-  (min-resolution: 1.25dppx),
-  (min-resolution: 120dpi) {
+(-webkit-min-device-pixel-ratio: 1.25),
+(min-resolution: 1.25dppx),
+(min-resolution: 120dpi) {
   /* Style adjustments for high resolution devices */
 }
 
@@ -185,6 +217,7 @@ textarea {
    ========================================================================== */
 
 @media print {
+
   *,
   *::before,
   *::after {
@@ -245,7 +278,10 @@ textarea {
   }
 }
 
-#booktable, #booktable tr, #booktable td, #booktable th {
+#booktable,
+#booktable tr,
+#booktable td,
+#booktable th {
   border: 2px solid black;
   border-collapse: collapse;
 }
