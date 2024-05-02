@@ -8,15 +8,17 @@ const spawn2 = true;
 const spawn4 = true;
 const spawn8 = false;
 let grid;
-//let grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
-//let grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
+
 
 $(() => {
     init();
 });
 
 function init() {
-    grid = makeGrid();
+    //grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
+    //grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
+    grid = [[1, 1, 2, 3], [3, 1, 1, 2], [1, 1, 1, 1], [0, 0, 0, 0]];
+    //grid = makeGrid();
     placeRandTile(grid);
     drawGrid(grid);
 }
@@ -34,6 +36,8 @@ function makeGrid() {
 
 function drawGrid(grid) {
     ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+
+    // draw empty tiles first
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
             let tile = grid[i][j];
@@ -44,7 +48,14 @@ function drawGrid(grid) {
                 ctx.lineWidth = 3;
                 ctx.strokeRect(j * tileSize, i * tileSize, tileSize, tileSize);
             }
-            else {
+        }
+    }
+
+    // draw filled tiles next so borders are correct
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            let tile = grid[i][j];
+            if (tile != 0) {
                 ctx.fillStyle = "cornflowerblue";
                 ctx.fillRect(j * tileSize, i * tileSize, tileSize, tileSize);
                 ctx.fillStyle = "black";
@@ -88,10 +99,11 @@ $("body").on("keydown", (event) => {
     if (event.keyCode == 37) { // left arrow
         console.log("Left shift");
         for (let i = 0; i < gridSize; i++) {
+            let maxMove = 0;
             for (let j = 1; j < gridSize; j++) {
                 if (grid[i][j] != 0) {
                     let move = j;
-                    for (let k = j - 1; k >= 0; k--) {
+                    for (let k = j - 1; k >= maxMove; k--) {
                         if (grid[i][k] == 0) {
                             change = true;
                             move = k;
@@ -101,6 +113,7 @@ $("body").on("keydown", (event) => {
                             change = true;
                             grid[i][j]++;
                             grid[i][k] = 0;
+                            maxMove = k + 1;
                             move = k;
                             console.log(`${2**grid[i][j]} tile formed`);
                             break;
