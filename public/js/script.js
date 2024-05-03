@@ -7,6 +7,8 @@ let tileSize = canvas.offsetWidth / gridSize;
 const spawn2 = true;
 const spawn4 = true;
 const spawn8 = false;
+const spawnTiles = true;
+let tiles_2048 = 0;
 let grid;
 let oldgrid;
 
@@ -19,6 +21,9 @@ function init() {
     //grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
     //grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
     //grid = [[2, 1, 1, 3], [3, 1, 1, 2], [2, 0, 1, 1], [0, 0, 0, 1]];
+    //grid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // empty board
+    //grid = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]];
+    //grid = [[10, 10, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
     grid = makeGrid(grid);
     oldgrid = makeGrid();
     placeRandTile(grid);
@@ -122,6 +127,10 @@ $("body").on("keydown", (event) => {
                             maxMove = k + 1;
                             move = k;
                             console.log(`${2**grid[i][j]} tile formed`);
+                            if (grid[i][j] == 11) {
+                                tiles_2048++;
+                                if (tiles_2048 == 1) win();
+                            }
                             break;
                         }
                         else break;
@@ -156,6 +165,10 @@ $("body").on("keydown", (event) => {
                             maxMove = k + 1;
                             move = k;
                             console.log(`${2**grid[i][j]} tile formed`);
+                            if (grid[i][j] == 11) {
+                                tiles_2048++;
+                                if (tiles_2048 == 1) win();
+                            }
                             break;
                         }
                         else break;
@@ -190,6 +203,10 @@ $("body").on("keydown", (event) => {
                             maxMove = k;
                             move = k;
                             console.log(`${2**grid[i][j]} tile formed`);
+                            if (grid[i][j] == 11) {
+                                tiles_2048++;
+                                if (tiles_2048 == 1) win();
+                            }
                             break;
                         }
                         else break;
@@ -224,6 +241,10 @@ $("body").on("keydown", (event) => {
                             maxMove = k;
                             move = k;
                             console.log(`${2**grid[i][j]} tile formed`);
+                            if (grid[i][j] == 11) {
+                                tiles_2048++;
+                                if (tiles_2048 == 1) win();
+                            }
                             break;
                         }
                         else break;
@@ -243,8 +264,9 @@ $("body").on("keydown", (event) => {
         drawGrid(grid);
     }
     if (change) {
-        placeRandTile(grid);
+        if (spawnTiles) placeRandTile(grid);
         drawGrid(grid);
+        checkGrid(grid);
     }
 });
 
@@ -276,6 +298,35 @@ function resizeGrid(grid, oldSize, newSize) {
         for (let i = 0; i < newSize; i++) {
             grid[i] = grid.slice(0, newSize);
         }
+    }
+}
+
+function win() {
+    console.log("You win!");
+    alert("You win!");
+}
+
+function checkGrid(grid) {
+    let lost = true;
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            if (grid[i][j] == 0) {
+                lost = false;
+                break;
+            }
+            if (j != gridSize - 1 && grid[i][j] == grid[i][j + 1]) {
+                lost = false;
+                break;
+            }
+            if (i != gridSize - 1 && grid[i][j] == grid[i + 1][j]) {
+                lost = false;
+                break;
+            }
+        }
+    }
+    if (lost) {
+        console.log("No more moves can be made, game lost");
+        alert("You lose!");
     }
 }
 
