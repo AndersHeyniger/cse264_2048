@@ -290,3 +290,10 @@ $("#size").on("input", (event) => {
     //console.log(grid.toString());
     drawGrid(grid);
 });
+
+$("#reset").on("click", () => {
+    grid = makeGrid();
+    oldgrid = makeGrid();
+    placeRandTile(grid);
+    drawGrid(grid);
+});
