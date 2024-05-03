@@ -43,10 +43,20 @@ body {
 #options {
   float: right;
   margin-top: 5%;
-  width: 40%;
+  margin-right: 5%;
+  width: 30%;
   height: 75%;
   background-color: bisque;
 
+}
+
+#size_div {
+  margin-left: 5%;
+  margin-top: 5%;
+}
+
+#size {
+  width: 90%;
 }
 
 

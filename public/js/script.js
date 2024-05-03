@@ -2,8 +2,8 @@ const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
 const canvasDim = canvas.getBoundingClientRect();
 
-const gridSize = 5;
-const tileSize = canvas.offsetWidth / gridSize;
+let gridSize = $("#size").val();
+let tileSize = canvas.offsetWidth / gridSize;
 const spawn2 = true;
 const spawn4 = true;
 const spawn8 = false;
@@ -18,12 +18,13 @@ $(() => {
 function init() {
     //grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
     //grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
-    //grid = [[1, 1, 2, 3], [3, 1, 1, 2], [1, 1, 1, 1], [0, 0, 0, 0]];
-    grid = makeGrid();
+    grid = [[1, 1, 2, 3], [3, 1, 1, 2], [1, 1, 1, 1], [0, 0, 0, 0]];
+    //grid = makeGrid(grid);
     oldgrid = makeGrid();
     placeRandTile(grid);
     copyGrid(oldgrid, grid);
     drawGrid(grid);
+    $("#size_label").html(`Board Size: ${$("#size").val()}`);
 }
 
 function makeGrid() {
@@ -254,3 +255,14 @@ function copyGrid(dest, source) {
         }
     }
 }
+
+$("#size").on("input", (event) => {
+    gridSize = $("#size").val();
+    tileSize = canvas.offsetWidth / gridSize;
+    $("#size_label").html(`Board Size: ${gridSize}`);
+    grid = [];
+    grid = makeGrid();
+    oldgrid = makeGrid();
+    placeRandTile(grid);
+    drawGrid(grid);
+});
