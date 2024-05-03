@@ -18,8 +18,8 @@ $(() => {
 function init() {
     //grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
     //grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
-    grid = [[1, 1, 2, 3], [3, 1, 1, 2], [1, 1, 1, 1], [0, 0, 0, 0]];
-    //grid = makeGrid(grid);
+    //grid = [[2, 1, 1, 3], [3, 1, 1, 2], [2, 0, 1, 1], [0, 0, 0, 1]];
+    grid = makeGrid(grid);
     oldgrid = makeGrid();
     placeRandTile(grid);
     copyGrid(oldgrid, grid);
@@ -187,7 +187,7 @@ $("body").on("keydown", (event) => {
                             change = true;
                             grid[i][j]++;
                             grid[i][k] = 0;
-                            maxMove = k - 2;
+                            maxMove = k;
                             move = k;
                             console.log(`${2**grid[i][j]} tile formed`);
                             break;
@@ -221,7 +221,7 @@ $("body").on("keydown", (event) => {
                             change = true;
                             grid[i][j]++;
                             grid[k][j] = 0;
-                            maxMove = k - 2;
+                            maxMove = k;
                             move = k;
                             console.log(`${2**grid[i][j]} tile formed`);
                             break;
@@ -256,13 +256,37 @@ function copyGrid(dest, source) {
     }
 }
 
+function resizeGrid(grid, oldSize, newSize) {
+    if (oldSize == newSize) return;
+    else if (oldSize < newSize) {
+        for (let i = 0; i < oldSize; i++) {
+            for (let j = 0; j < newSize - oldSize; j++) {
+                grid[i].push(0);
+            }
+        }
+        for (let i = oldSize; i < newSize; i++) {
+            grid.push([]);
+            for (let j = 0; j < newSize; j++) {
+                grid[i].push(0);
+            }
+        }
+    }
+    else {
+        grid = grid.slice(0, newSize);
+        for (let i = 0; i < newSize; i++) {
+            grid[i] = grid.slice(0, newSize);
+        }
+    }
+}
+
 $("#size").on("input", (event) => {
+    let oldSize = gridSize;
     gridSize = $("#size").val();
     tileSize = canvas.offsetWidth / gridSize;
     $("#size_label").html(`Board Size: ${gridSize}`);
-    grid = [];
-    grid = makeGrid();
+    resizeGrid(grid, oldSize, gridSize);
     oldgrid = makeGrid();
-    placeRandTile(grid);
+    copyGrid(oldgrid, grid);
+    //console.log(grid.toString());
     drawGrid(grid);
 });
