@@ -11,10 +11,14 @@ const spawnTiles = true;
 let score = 0;
 let highScore = 0;
 let bestTile = 0;
-let tiles_2048 = 0;
+let wins = 0; // number of 2048 tiles created
 let grid;
-let oldgrid;
 
+let oldgrid; // previous grid for undo
+let prevScore; // previous score for undo
+let prevHighScore; // previous high score for undo
+let prevWins; // previous wins for undo
+let prevBestTile; // previous best tile for undo
 
 $(() => {
     init();
@@ -103,166 +107,183 @@ function placeRandTile(grid) {
         col = Math.floor(Math.random() * gridSize);
     }
     grid[row][col] = tile;
+
     console.log(`${2 ** tile} placed at (${row}, ${col})`);
 }
 
 $("body").on("keydown", (event) => {
     let change = false;
-
-    if (event.keyCode == 37) { // left arrow
+    key = event.keyCode;
+    if (key >= 37 && key <= 40) {
         copyGrid(oldgrid, grid);
-        console.log("Left shift");
-        for (let i = 0; i < gridSize; i++) {
-            let maxMove = 0;
-            for (let j = 1; j < gridSize; j++) {
-                if (grid[i][j] != 0) {
-                    let move = j;
-                    for (let k = j - 1; k >= maxMove; k--) {
-                        if (grid[i][k] == 0) {
-                            change = true;
-                            move = k;
-                        }
-                        else if (grid[i][k] == grid[i][j]) {
-                            console.log(`Tiles at (${i}, ${j}) and (${i}, ${k}) combined`);
-                            change = true;
-                            grid[i][j]++;
-                            grid[i][k] = 0;
-                            maxMove = k + 1;
-                            move = k;
-                            console.log(`${2 ** grid[i][j]} tile formed`);
-                            if (grid[i][j] == 11) {
-                                tiles_2048++;
-                                if (tiles_2048 == 1) win();
+        prevScore = score;
+        prevHighScore = highScore;
+        prevBestTile = bestTile;
+        prevWins = wins;
+        if (key == 37 || key == 39) {
+            if (key == 37) { // left arrow
+                console.log("Left shift");
+                for (let i = 0; i < gridSize; i++) {
+                    let maxMove = 0;
+                    for (let j = 1; j < gridSize; j++) {
+                        if (grid[i][j] != 0) {
+                            let move = j;
+                            for (let k = j - 1; k >= maxMove; k--) {
+                                if (grid[i][k] == 0) {
+                                    change = true;
+                                    move = k;
+                                }
+                                else if (grid[i][k] == grid[i][j]) {
+                                    console.log(`Tiles at (${i}, ${j}) and (${i}, ${k}) combined`);
+                                    change = true;
+                                    grid[i][j]++;
+                                    grid[i][k] = 0;
+                                    maxMove = k + 1;
+                                    move = k;
+                                    console.log(`${2 ** grid[i][j]} tile formed`);
+                                    score += 2 ** grid[i][j];
+                                    if (grid[i][j] == 11) {
+                                        wins++;
+                                        if (wins == 1) win();
+                                    }
+                                    break;
+                                }
+                                else break;
                             }
-                            break;
+                            if (change) {
+                                let temp = grid[i][j];
+                                grid[i][j] = grid[i][move];
+                                grid[i][move] = temp;
+                            }
                         }
-                        else break;
                     }
-                    if (change) {
-                        let temp = grid[i][j];
-                        grid[i][j] = grid[i][move];
-                        grid[i][move] = temp;
+                }
+            }
+            else if (key == 39) { // right arrow
+                console.log("Right shift");
+                for (let i = 0; i < gridSize; i++) {
+                    let maxMove = gridSize;
+                    for (let j = gridSize - 1; j >= 0; j--) {
+                        if (grid[i][j] != 0) {
+                            let move = j;
+                            for (let k = j + 1; k < maxMove; k++) {
+                                if (grid[i][k] == 0) {
+                                    change = true;
+                                    move = k;
+                                }
+                                else if (grid[i][k] == grid[i][j]) {
+                                    console.log(`Tiles at (${i}, ${j}) and (${i}, ${k}) combined`);
+                                    change = true;
+                                    grid[i][j]++;
+                                    grid[i][k] = 0;
+                                    maxMove = k;
+                                    move = k;
+                                    console.log(`${2 ** grid[i][j]} tile formed`);
+                                    score += 2 ** grid[i][j];
+                                    if (grid[i][j] == 11) {
+                                        wins++;
+                                        if (wins == 1) win();
+                                    }
+                                    break;
+                                }
+                                else break;
+                            }
+                            if (change) {
+                                let temp = grid[i][j];
+                                grid[i][j] = grid[i][move];
+                                grid[i][move] = temp;
+                            }
+                        }
                     }
                 }
             }
         }
-    }
-    else if (event.keyCode == 38) { // up arrow
-        copyGrid(oldgrid, grid);
-        console.log("Up shift");
-        for (let j = 0; j < gridSize; j++) {
-            let maxMove = 0;
-            for (let i = 1; i < gridSize; i++) {
-                if (grid[i][j] != 0) {
-                    let move = i;
-                    for (let k = i - 1; k >= maxMove; k--) {
-                        if (grid[k][j] == 0) {
-                            change = true;
-                            move = k;
-                        }
-                        else if (grid[k][j] == grid[i][j]) {
-                            console.log(`Tiles at (${i}, ${j}) and (${k}, ${j}) combined`);
-                            grid[i][j]++;
-                            change = true;
-                            grid[k][j] = 0;
-                            maxMove = k + 1;
-                            move = k;
-                            console.log(`${2 ** grid[i][j]} tile formed`);
-                            if (grid[i][j] == 11) {
-                                tiles_2048++;
-                                if (tiles_2048 == 1) win();
+        else {
+            if (key == 38) { // up arrow
+                console.log("Up shift");
+                for (let j = 0; j < gridSize; j++) {
+                    let maxMove = 0;
+                    for (let i = 1; i < gridSize; i++) {
+                        if (grid[i][j] != 0) {
+                            let move = i;
+                            for (let k = i - 1; k >= maxMove; k--) {
+                                if (grid[k][j] == 0) {
+                                    change = true;
+                                    move = k;
+                                }
+                                else if (grid[k][j] == grid[i][j]) {
+                                    console.log(`Tiles at (${i}, ${j}) and (${k}, ${j}) combined`);
+                                    grid[i][j]++;
+                                    change = true;
+                                    grid[k][j] = 0;
+                                    maxMove = k + 1;
+                                    move = k;
+                                    console.log(`${2 ** grid[i][j]} tile formed`);
+                                    score += 2 ** grid[i][j];
+                                    if (grid[i][j] == 11) {
+                                        wins++;
+                                        if (wins == 1) win();
+                                    }
+                                    break;
+                                }
+                                else break;
                             }
-                            break;
+                            if (change) {
+                                let temp = grid[i][j];
+                                grid[i][j] = grid[move][j];
+                                grid[move][j] = temp;
+                            }
                         }
-                        else break;
                     }
-                    if (change) {
-                        let temp = grid[i][j];
-                        grid[i][j] = grid[move][j];
-                        grid[move][j] = temp;
+                }
+            }
+            else if (key == 40) { // down arrow
+                console.log("Down shift");
+                for (let j = 0; j < gridSize; j++) {
+                    let maxMove = gridSize;
+                    for (let i = gridSize - 1; i >= 0; i--) {
+                        if (grid[i][j] != 0) {
+                            let move = i;
+                            for (let k = i + 1; k < maxMove; k++) {
+                                if (grid[k][j] == 0) {
+                                    change = true;
+                                    move = k;
+                                }
+                                else if (grid[k][j] == grid[i][j]) {
+                                    console.log(`Tiles at (${i}, ${j}) and (${k}, ${j}) combined`);
+                                    change = true;
+                                    grid[i][j]++;
+                                    grid[k][j] = 0;
+                                    maxMove = k;
+                                    move = k;
+                                    console.log(`${2 ** grid[i][j]} tile formed`);
+                                    score += 2 ** grid[i][j];
+                                    if (grid[i][j] == 11) {
+                                        wins++;
+                                        if (wins == 1) win();
+                                    }
+                                    break;
+                                }
+                                else break;
+                            }
+                            if (change) {
+                                let temp = grid[i][j];
+                                grid[i][j] = grid[move][j];
+                                grid[move][j] = temp;
+                            }
+                        }
                     }
                 }
             }
         }
+        if (score > highScore) highScore = score;
     }
-    else if (event.keyCode == 39) { // right arrow
-        copyGrid(oldgrid, grid);
-        console.log("Right shift");
-        for (let i = 0; i < gridSize; i++) {
-            let maxMove = gridSize;
-            for (let j = gridSize - 1; j >= 0; j--) {
-                if (grid[i][j] != 0) {
-                    let move = j;
-                    for (let k = j + 1; k < maxMove; k++) {
-                        if (grid[i][k] == 0) {
-                            change = true;
-                            move = k;
-                        }
-                        else if (grid[i][k] == grid[i][j]) {
-                            console.log(`Tiles at (${i}, ${j}) and (${i}, ${k}) combined`);
-                            change = true;
-                            grid[i][j]++;
-                            grid[i][k] = 0;
-                            maxMove = k;
-                            move = k;
-                            console.log(`${2 ** grid[i][j]} tile formed`);
-                            if (grid[i][j] == 11) {
-                                tiles_2048++;
-                                if (tiles_2048 == 1) win();
-                            }
-                            break;
-                        }
-                        else break;
-                    }
-                    if (change) {
-                        let temp = grid[i][j];
-                        grid[i][j] = grid[i][move];
-                        grid[i][move] = temp;
-                    }
-                }
-            }
-        }
-    }
-    else if (event.keyCode == 40) { // down arrow
-        copyGrid(oldgrid, grid);
-        console.log("Down shift");
-        for (let j = 0; j < gridSize; j++) {
-            let maxMove = gridSize;
-            for (let i = gridSize - 1; i >= 0; i--) {
-                if (grid[i][j] != 0) {
-                    let move = i;
-                    for (let k = i + 1; k < maxMove; k++) {
-                        if (grid[k][j] == 0) {
-                            change = true;
-                            move = k;
-                        }
-                        else if (grid[k][j] == grid[i][j]) {
-                            console.log(`Tiles at (${i}, ${j}) and (${k}, ${j}) combined`);
-                            change = true;
-                            grid[i][j]++;
-                            grid[k][j] = 0;
-                            maxMove = k;
-                            move = k;
-                            console.log(`${2 ** grid[i][j]} tile formed`);
-                            if (grid[i][j] == 11) {
-                                tiles_2048++;
-                                if (tiles_2048 == 1) win();
-                            }
-                            break;
-                        }
-                        else break;
-                    }
-                    if (change) {
-                        let temp = grid[i][j];
-                        grid[i][j] = grid[move][j];
-                        grid[move][j] = temp;
-                    }
-                }
-            }
-        }
-    }
-    else if (event.keyCode == 82) {
+    else if (key == 82) {
         console.log("Undo action");
+        wins = prevWins;
+        score = prevScore;
+        highScore = prevHighScore;
+        bestTile = prevBestTile;
         copyGrid(grid, oldgrid);
         drawGrid(grid);
     }
@@ -272,6 +293,10 @@ $("body").on("keydown", (event) => {
         checkGrid(grid);
     }
 });
+
+function moveTiles(r1, c1, r2, c2, dir) {
+    
+}
 
 function copyGrid(dest, source) {
     for (let i = 0; i < gridSize; i++) {
@@ -346,6 +371,7 @@ $("#size").on("input", (event) => {
 });
 
 $("#reset").on("click", () => {
+    score = 0;
     grid = makeGrid();
     oldgrid = makeGrid();
     placeRandTile(grid);
