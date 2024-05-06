@@ -25,15 +25,18 @@ $(() => {
 });
 
 function init() {
+    grid = makeGrid(grid);
+    oldgrid = makeGrid();
+    if (spawnTiles) placeRandTile(grid);
+
     //grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
     //grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
     //grid = [[2, 1, 1, 3], [3, 1, 1, 2], [2, 0, 1, 1], [0, 0, 0, 1]];
+    //grid = [[0, 0, 0, 0], [4, 3, 1, 2], [2, 0, 1, 0], [2, 0, 2, 0]];
     //grid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // empty board
     //grid = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]; // full board
     //grid = [[10, 10, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // winning board
-    grid = makeGrid(grid);
-    oldgrid = makeGrid();
-    placeRandTile(grid);
+    
     copyGrid(oldgrid, grid);
     drawGrid(grid);
     $("#size_label").html(`Board Size: ${$("#size").val()}`);
@@ -134,27 +137,14 @@ $("body").on("keydown", (event) => {
                                     move = k;
                                 }
                                 else if (grid[i][k] == grid[i][j]) {
-                                    console.log(`Tiles at (${i}, ${j}) and (${i}, ${k}) combined`);
                                     change = true;
-                                    grid[i][j]++;
-                                    grid[i][k] = 0;
                                     maxMove = k + 1;
                                     move = k;
-                                    console.log(`${2 ** grid[i][j]} tile formed`);
-                                    score += 2 ** grid[i][j];
-                                    if (grid[i][j] == 11) {
-                                        wins++;
-                                        if (wins == 1) win();
-                                    }
                                     break;
                                 }
                                 else break;
                             }
-                            if (change) {
-                                let temp = grid[i][j];
-                                grid[i][j] = grid[i][move];
-                                grid[i][move] = temp;
-                            }
+                            moveTiles(i, move, i, j, "left");
                         }
                     }
                 }
@@ -172,27 +162,14 @@ $("body").on("keydown", (event) => {
                                     move = k;
                                 }
                                 else if (grid[i][k] == grid[i][j]) {
-                                    console.log(`Tiles at (${i}, ${j}) and (${i}, ${k}) combined`);
                                     change = true;
-                                    grid[i][j]++;
-                                    grid[i][k] = 0;
                                     maxMove = k;
                                     move = k;
-                                    console.log(`${2 ** grid[i][j]} tile formed`);
-                                    score += 2 ** grid[i][j];
-                                    if (grid[i][j] == 11) {
-                                        wins++;
-                                        if (wins == 1) win();
-                                    }
                                     break;
                                 }
                                 else break;
                             }
-                            if (change) {
-                                let temp = grid[i][j];
-                                grid[i][j] = grid[i][move];
-                                grid[i][move] = temp;
-                            }
+                            moveTiles(i, move, i, j, "right");
                         }
                     }
                 }
@@ -212,27 +189,14 @@ $("body").on("keydown", (event) => {
                                     move = k;
                                 }
                                 else if (grid[k][j] == grid[i][j]) {
-                                    console.log(`Tiles at (${i}, ${j}) and (${k}, ${j}) combined`);
-                                    grid[i][j]++;
                                     change = true;
-                                    grid[k][j] = 0;
                                     maxMove = k + 1;
                                     move = k;
-                                    console.log(`${2 ** grid[i][j]} tile formed`);
-                                    score += 2 ** grid[i][j];
-                                    if (grid[i][j] == 11) {
-                                        wins++;
-                                        if (wins == 1) win();
-                                    }
                                     break;
                                 }
                                 else break;
                             }
-                            if (change) {
-                                let temp = grid[i][j];
-                                grid[i][j] = grid[move][j];
-                                grid[move][j] = temp;
-                            }
+                            moveTiles(move, j, i, j, "up");
                         }
                     }
                 }
@@ -250,27 +214,14 @@ $("body").on("keydown", (event) => {
                                     move = k;
                                 }
                                 else if (grid[k][j] == grid[i][j]) {
-                                    console.log(`Tiles at (${i}, ${j}) and (${k}, ${j}) combined`);
                                     change = true;
-                                    grid[i][j]++;
-                                    grid[k][j] = 0;
                                     maxMove = k;
                                     move = k;
-                                    console.log(`${2 ** grid[i][j]} tile formed`);
-                                    score += 2 ** grid[i][j];
-                                    if (grid[i][j] == 11) {
-                                        wins++;
-                                        if (wins == 1) win();
-                                    }
                                     break;
                                 }
                                 else break;
                             }
-                            if (change) {
-                                let temp = grid[i][j];
-                                grid[i][j] = grid[move][j];
-                                grid[move][j] = temp;
-                            }
+                            moveTiles(move, j, i, j, "down");
                         }
                     }
                 }
@@ -295,7 +246,51 @@ $("body").on("keydown", (event) => {
 });
 
 function moveTiles(r1, c1, r2, c2, dir) {
-    
+    if (r1 == r2 && c1 == c2) return;
+    let toRow = r1;
+    let toCol = c1;
+    let fromRow = r1;
+    let fromCol = c1;
+    if (dir == "left") {
+        if (r1 != r2) console.log("Error: invalid tile swap");
+        toCol = Math.min(c1, c2);
+        fromCol = Math.max(c1, c2);
+    }
+    else if (dir == "right") {
+        if (r1 != r2) console.log("Error: invalid tile swap");
+        toCol = Math.max(c1, c2);
+        fromCol = Math.min(c1, c2);
+    }
+    else if (dir == "up") {
+        if (c1 != c2) console.log("Error: invalid tile swap");
+        toRow = Math.min(r1, r2);
+        fromRow = Math.max(r1, r2);
+    }
+    else if (dir == "down") {
+        if (c1 != c2) console.log("Error: invalid tile swap");
+        toRow = Math.max(r1, r2);
+        fromRow = Math.min(r1, r2);
+    }
+    else {
+
+    }
+    //console.log(`Swapping (${toRow}, ${toCol}) (${grid[toRow][toCol]}) and (${fromRow}, ${fromCol}) (${grid[fromRow][fromCol]})`);
+    if (grid[toRow][toCol] == grid[fromRow][fromCol]) {
+        console.log(`Tiles at (${toRow}, ${toCol}) (${grid[toRow][toCol]}) and (${fromRow}, ${fromCol}) (${grid[fromRow][fromCol]}) combined`);
+        grid[toRow][toCol]++;
+        let newTile = 2 ** grid[toRow][toCol];
+        console.log(`${newTile} tile formed`);
+        score += newTile;
+    }
+    else {
+        //console.log(`Tiles at (${toRow}, ${toCol}) and (${fromRow}, ${fromCol}) swapped`);
+        grid[toRow][toCol] = grid[fromRow][fromCol];
+    }
+    grid[fromRow][fromCol] = 0;
+    if (grid[toRow][toCol] == 11) {
+        wins++;
+        if (wins == 1) win();
+    }
 }
 
 function copyGrid(dest, source) {
