@@ -22,8 +22,8 @@ function init() {
     //grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
     //grid = [[2, 1, 1, 3], [3, 1, 1, 2], [2, 0, 1, 1], [0, 0, 0, 1]];
     //grid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // empty board
-    //grid = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]];
-    //grid = [[10, 10, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+    //grid = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]; // full board
+    //grid = [[10, 10, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // winning board
     grid = makeGrid(grid);
     oldgrid = makeGrid();
     placeRandTile(grid);
@@ -89,8 +89,8 @@ function placeRandTile(grid) {
     let rand = Math.random();
     let tile = 1;
     if (spawn2) {
-         if (rand < 0.75) tile = 1;
-         else if (spawn4) tile = 2;
+        if (rand < 0.75) tile = 1;
+        else if (spawn4) tile = 2;
     }
     else tile = 2;
     let row = Math.floor(Math.random() * gridSize);
@@ -100,12 +100,12 @@ function placeRandTile(grid) {
         col = Math.floor(Math.random() * gridSize);
     }
     grid[row][col] = tile;
-    console.log(`${2**tile} placed at (${row}, ${col})`);
+    console.log(`${2 ** tile} placed at (${row}, ${col})`);
 }
 
 $("body").on("keydown", (event) => {
     let change = false;
-    
+
     if (event.keyCode == 37) { // left arrow
         copyGrid(oldgrid, grid);
         console.log("Left shift");
@@ -126,7 +126,7 @@ $("body").on("keydown", (event) => {
                             grid[i][k] = 0;
                             maxMove = k + 1;
                             move = k;
-                            console.log(`${2**grid[i][j]} tile formed`);
+                            console.log(`${2 ** grid[i][j]} tile formed`);
                             if (grid[i][j] == 11) {
                                 tiles_2048++;
                                 if (tiles_2048 == 1) win();
@@ -164,7 +164,7 @@ $("body").on("keydown", (event) => {
                             grid[k][j] = 0;
                             maxMove = k + 1;
                             move = k;
-                            console.log(`${2**grid[i][j]} tile formed`);
+                            console.log(`${2 ** grid[i][j]} tile formed`);
                             if (grid[i][j] == 11) {
                                 tiles_2048++;
                                 if (tiles_2048 == 1) win();
@@ -202,7 +202,7 @@ $("body").on("keydown", (event) => {
                             grid[i][k] = 0;
                             maxMove = k;
                             move = k;
-                            console.log(`${2**grid[i][j]} tile formed`);
+                            console.log(`${2 ** grid[i][j]} tile formed`);
                             if (grid[i][j] == 11) {
                                 tiles_2048++;
                                 if (tiles_2048 == 1) win();
@@ -240,7 +240,7 @@ $("body").on("keydown", (event) => {
                             grid[k][j] = 0;
                             maxMove = k;
                             move = k;
-                            console.log(`${2**grid[i][j]} tile formed`);
+                            console.log(`${2 ** grid[i][j]} tile formed`);
                             if (grid[i][j] == 11) {
                                 tiles_2048++;
                                 if (tiles_2048 == 1) win();

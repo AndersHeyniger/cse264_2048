@@ -26,18 +26,26 @@ body {
   width: 100%;
 }
 
-#game_div {
+#stats {
   margin-top: 5%;
-  width: 60%;
+  margin-left: 5%;
+  width: 20%;
   float: left;
+  height: 75%;
+  background-color: #999;
+}
+
+#game_div {
+  float: left;
+  margin-top: 5%;
+  width: 30%;
   height: 75%;
 }
 
 #board {
-  margin-left: 20%;
+  margin-left: 5%;
   margin-right: 5%;
   background-color: #fff;
-  float: right;
 }
 
 #options {
