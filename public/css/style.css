@@ -32,12 +32,35 @@ body {
   width: 20%;
   float: left;
   height: 75%;
-  background-color: #999;
+  background-color: #b3bdfc;
+}
+
+#stats div {
+  margin-left: 10%;
+  height: 22%;
+}
+
+#stats div h2 {
+  text-align: center;
+  margin-top: 0%;
+  font-size: 2.5em;
+  width: 50%
+}
+
+#score_div {
+  margin-top: 5%;
+}
+
+#stats h1 {
+  padding-bottom: 0%;
+  margin-bottom: 0%;
+  font-size: 2.8em;
 }
 
 #game_div {
   float: left;
   margin-top: 5%;
+  margin-left: 4%;
   width: 30%;
   height: 75%;
 }
