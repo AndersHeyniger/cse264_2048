@@ -39,6 +39,7 @@ function init() {
     
     copyGrid(oldgrid, grid);
     drawGrid(grid);
+    updateStats();
     $("#size_label").html(`Board Size: ${$("#size").val()}`);
 }
 
@@ -110,7 +111,7 @@ function placeRandTile(grid) {
         col = Math.floor(Math.random() * gridSize);
     }
     grid[row][col] = tile;
-
+    if (2 ** tile > bestTile) bestTile = 2 ** tile;
     console.log(`${2 ** tile} placed at (${row}, ${col})`);
 }
 
@@ -230,18 +231,13 @@ $("body").on("keydown", (event) => {
         if (score > highScore) highScore = score;
     }
     else if (key == 82) {
-        console.log("Undo action");
-        wins = prevWins;
-        score = prevScore;
-        highScore = prevHighScore;
-        bestTile = prevBestTile;
-        copyGrid(grid, oldgrid);
-        drawGrid(grid);
+        undo();
     }
     if (change) {
         if (spawnTiles) placeRandTile(grid);
         drawGrid(grid);
         checkGrid(grid);
+        updateStats();
     }
 });
 
@@ -272,13 +268,15 @@ function moveTiles(r1, c1, r2, c2, dir) {
         fromRow = Math.min(r1, r2);
     }
     else {
-
+        console.log("Error: Invalid move direction");
+        return;
     }
     //console.log(`Swapping (${toRow}, ${toCol}) (${grid[toRow][toCol]}) and (${fromRow}, ${fromCol}) (${grid[fromRow][fromCol]})`);
     if (grid[toRow][toCol] == grid[fromRow][fromCol]) {
         console.log(`Tiles at (${toRow}, ${toCol}) (${grid[toRow][toCol]}) and (${fromRow}, ${fromCol}) (${grid[fromRow][fromCol]}) combined`);
         grid[toRow][toCol]++;
         let newTile = 2 ** grid[toRow][toCol];
+        if (newTile > bestTile) bestTile = newTile;
         console.log(`${newTile} tile formed`);
         score += newTile;
     }
@@ -291,6 +289,17 @@ function moveTiles(r1, c1, r2, c2, dir) {
         wins++;
         if (wins == 1) win();
     }
+}
+
+function undo() {
+    console.log("Undo action");
+    wins = prevWins;
+    score = prevScore;
+    highScore = prevHighScore;
+    bestTile = prevBestTile;
+    copyGrid(grid, oldgrid);
+    updateStats();
+    drawGrid(grid);
 }
 
 function copyGrid(dest, source) {
@@ -353,6 +362,13 @@ function checkGrid(grid) {
     }
 }
 
+function updateStats() {
+    $("#score").html(score);
+    $("#highScore").html(highScore);
+    $("#bestTile").html(bestTile);
+    $("#numWins").html(wins);
+}
+
 $("#size").on("input", (event) => {
     let oldSize = gridSize;
     gridSize = $("#size").val();
@@ -370,5 +386,6 @@ $("#reset").on("click", () => {
     grid = makeGrid();
     oldgrid = makeGrid();
     placeRandTile(grid);
+    updateStats();
     drawGrid(grid);
 });
