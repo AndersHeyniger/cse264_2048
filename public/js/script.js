@@ -7,7 +7,7 @@ let tileSize = canvas.offsetWidth / gridSize;
 let spawn2 = true;
 let spawn4 = true;
 let spawn8 = false;
-let classic = true;
+let classic = false;
 const animationTime = 200; // milliseconds
 const emptyGrid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
 
@@ -507,8 +507,8 @@ $("#reset").on("click", () => {
     drawGrid(grid);
 });
 
-$("#main_options form input").on("change", () => {
-    let status = $('input[name=cheat]:checked', '#main_options form').val();
+$("#cheatsForm input").on("change", () => {
+    let status = $('input[name=cheat]:checked', '#cheatsForm').val();
     if (status == "disable") {
         $("#cheats").css("display", "none");
     }
@@ -546,5 +546,10 @@ $("#spawn8").on("change", () => {
 $("#spawn").on("click", () => {
     placeRandTile(grid);
     updateStats();
+    drawGrid(grid);
+});
+
+$("#classicMode").on("change", () => {
+    classic = $("#classicMode").prop("checked");
     drawGrid(grid);
 });

@@ -55,10 +55,18 @@
         <label for="size" id="size_label">Board Size:</label>
         <br>
         <input type="range" min="4" max="9" value="4" id="size">
-        <br>
+        <br><br>
         <button type="button" id="reset">Reset</button>
         <br><br>
-        <form>
+        <form id="classicForm">
+          Turn on Classic Mode?&emsp;
+          <label class="switch" for="classicMode">
+            <input type="checkbox" id="classicMode">
+            <span class="slider round"></span>
+          </label>
+        </form>
+        <br>
+        <form id="cheatsForm">
           <label>Show Cheats?&emsp;&emsp;&emsp;</label>
           <input type="radio" id="enable_cheats" name="cheat" value="enable">
           <label for="enable_cheats">&ensp;Yes&emsp;&emsp;&emsp;</label>
