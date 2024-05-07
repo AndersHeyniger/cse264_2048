@@ -8,9 +8,9 @@ const emptyGrid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
 let images;
 let board_img_path = "/img/empty_2048_full.png";
 let border_img_path = "/img/empty_2048_border.png";
-let img_paths = ["/img/tile2.PNG", "/img/tile4.PNG", "/img/tile8.PNG", 
-                "/img/tile16.PNG", "/img/tile32.PNG", "/img/tile64.PNG", "/img/tile128.PNG", 
-                "/img/tile256.PNG", "/img/tile512.PNG", "/img/tile1024.PNG", "/img/tile2048.PNG"];
+let img_paths = ["/img/tile2.PNG", "/img/tile4.PNG", "/img/tile8.PNG",
+    "/img/tile16.PNG", "/img/tile32.PNG", "/img/tile64.PNG", "/img/tile128.PNG",
+    "/img/tile256.PNG", "/img/tile512.PNG", "/img/tile1024.PNG", "/img/tile2048.PNG"];
 
 
 let gridSize = $("#size").val();
@@ -21,7 +21,7 @@ let spawn2 = true;
 let spawn4 = true;
 let spawn8 = false;
 let classic = false; // when classic mode is on, the game visuals are drawn using images from the original
-                     // game, instead of manually drawn using canvas
+// game, instead of manually drawn using canvas
 
 let score = 0;
 let highScore = 0;
@@ -76,14 +76,15 @@ function init() {
         //grid = [[0, 0, 0, 0], [4, 3, 1, 2], [2, 0, 1, 0], [2, 0, 2, 0]];
         //grid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // empty board
         //grid = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]; // full board
-        //grid = [[10, 10, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // winning board
-        
+        grid = [[10, 10, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // winning board
+        //grid = [[10, 10, 0, 0], [11, 11, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // winning board 2
+
         copyGrid(oldgrid, grid);
         drawGrid(grid);
         updateStats();
         $("#size_label").html(`Board Size: ${$("#size").val()}`);
     });
-    
+
 }
 
 function makeGrid() {
@@ -126,7 +127,8 @@ function drawGrid(grid) {
             for (let j = 0; j < gridSize; j++) {
                 let tile = grid[i][j];
                 if (tile != 0) {
-                    ctx.drawImage(images[tile], j * tileSize, i * tileSize, tileSize, tileSize);
+                    if (tile > 11) drawTile(tile, i, j);
+                    else ctx.drawImage(images[tile], j * tileSize, i * tileSize, tileSize, tileSize);
                 }
             }
         }
@@ -147,6 +149,7 @@ function drawTile(num, row, col) {
     }
     else {
         ctx.fillStyle = "cornflowerblue";
+        if (num >= 11) ctx.fillStyle = "#AE77DB";
         ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
         ctx.fillStyle = "black";
         ctx.textAlign = "center";
@@ -173,7 +176,7 @@ function placeRandTile(grid) {
         else if (spawn8) tile = 3;
         else tile = 1;
     }
-    else if (spawn4){
+    else if (spawn4) {
         if (rand < 0.75) tile = 2;
         else if (spawn8) tile = 3;
         else tile = 2;
