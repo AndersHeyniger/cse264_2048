@@ -84,6 +84,14 @@ body {
 #main_options {
   margin-left: 5%;
   margin-top: 5%;
+  height: 45%;
+}
+
+#cheats {
+  display: none;
+  height: 45%;
+  margin-bottom: 5%;
+  margin-left: 5%;
 }
 
 #size {

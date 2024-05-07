@@ -7,9 +7,11 @@ let tileSize = canvas.offsetWidth / gridSize;
 const spawn2 = true;
 const spawn4 = true;
 const spawn8 = false;
-const spawnTiles = true;
 const animationTime = 200; // milliseconds
 const emptyGrid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+
+let spawnTiles = true;
+
 let score = 0;
 let highScore = 0;
 let bestTile = 0;
@@ -448,5 +450,14 @@ $("#reset").on("click", () => {
 
 $("#main_options form input").on("change", () => {
     let status = $('input[name=cheat]:checked', '#main_options form').val();
-    alert(status);
+    if (status == "disable") {
+        $("#cheats").css("display", "none");
+    }
+    else {
+        $("#cheats").css("display", "block");
+    }
+});
+
+$("#spawnCheck").on("change", () => {
+    spawnTiles = $("#spawnCheck").prop("checked");
 });

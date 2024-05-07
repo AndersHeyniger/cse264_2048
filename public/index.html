@@ -48,6 +48,7 @@
     <div id="options">
 
       <div id="main_options">
+        <h3>Options</h3>
         <label for="size" id="size_label">Board Size:</label>
         <br>
         <input type="range" min="4" max="9" value="4" id="size">
@@ -58,12 +59,14 @@
           <label>Enable Cheats?&emsp;&emsp;&emsp;</label>
           <input type="radio" id="enable_cheats" name="cheat" value="enable">
           <label for="enable_cheats">&ensp;Yes&emsp;&emsp;&emsp;</label>
-          <input type="radio" id="disable_cheats" name="cheat" value="disable">
+          <input type="radio" id="disable_cheats" name="cheat" value="disable" checked>
           <label for="disable_cheats">&ensp;No&emsp;</label>
         </form>
       </div>
       <div id="cheats">
-
+        <h3>Cheats</h3>
+        <label for="spawnCheck">Spawn Random Tiles?</label>
+        <input type="checkbox" id="spawnCheck" checked>
       </div>
     </div>
   </div>
