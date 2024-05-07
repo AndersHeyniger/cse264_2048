@@ -19,6 +19,7 @@ html {
 
 body {
   background-color: #b3d4fc;
+  overflow: hidden;
 }
 
 #banner h1 {
