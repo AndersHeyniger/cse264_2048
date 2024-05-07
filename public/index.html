@@ -56,7 +56,7 @@
         <button type="button" id="reset">Reset</button>
         <br><br>
         <form>
-          <label>Enable Cheats?&emsp;&emsp;&emsp;</label>
+          <label>Show Cheats?&emsp;&emsp;&emsp;</label>
           <input type="radio" id="enable_cheats" name="cheat" value="enable">
           <label for="enable_cheats">&ensp;Yes&emsp;&emsp;&emsp;</label>
           <input type="radio" id="disable_cheats" name="cheat" value="disable" checked>
@@ -65,8 +65,27 @@
       </div>
       <div id="cheats">
         <h3>Cheats</h3>
-        <label for="spawnCheck">Spawn Random Tiles?</label>
         <input type="checkbox" id="spawnCheck" checked>
+        <label for="spawnCheck">&ensp;Spawn Random Tiles?</label>
+        <table id="spawnToggle">
+          <thead>
+            <tr>
+              <td>Spawn 2</td>
+              <td>Spawn 4</td>
+              <td>Spawn 8</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox" id="spawn2" checked></td>
+              <td><input type="checkbox" id="spawn4" checked></td>
+              <td><input type="checkbox" id="spawn8"></td>
+            </tr>
+          </tbody>
+          
+        </table>
+        <br><br>
+        <button type="button" id="spawn">Spawn Tile</button>
       </div>
     </div>
   </div>

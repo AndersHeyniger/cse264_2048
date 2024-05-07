@@ -4,9 +4,9 @@ const canvasDim = canvas.getBoundingClientRect();
 
 let gridSize = $("#size").val();
 let tileSize = canvas.offsetWidth / gridSize;
-const spawn2 = true;
-const spawn4 = true;
-const spawn8 = false;
+let spawn2 = true;
+let spawn4 = true;
+let spawn8 = false;
 const animationTime = 200; // milliseconds
 const emptyGrid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
 
@@ -111,12 +111,19 @@ function drawTile(num, row, col) {
 
 function placeRandTile(grid) {
     let rand = Math.random();
-    let tile = 1;
+    let tile = 0;
     if (spawn2) {
         if (rand < 0.75) tile = 1;
-        else if (spawn4) tile = 2;
+        else if (spawn4 && rand < 0.9375) tile = 2;
+        else if (spawn8) tile = 3;
+        else tile = 1;
     }
-    else tile = 2;
+    else if (spawn4){
+        if (rand < 0.75) tile = 2;
+        else if (spawn8) tile = 3;
+        else tile = 2;
+    }
+    else if (spawn8) tile = 3;
     let row = Math.floor(Math.random() * gridSize);
     let col = Math.floor(Math.random() * gridSize);
     while (grid[row][col] != 0) {
@@ -459,5 +466,33 @@ $("#main_options form input").on("change", () => {
 });
 
 $("#spawnCheck").on("change", () => {
-    spawnTiles = $("#spawnCheck").prop("checked");
+    let checked = $("#spawnCheck").prop("checked");
+    spawnTiles = checked;
+    if (checked) {
+        console.log("Random tile spawn enabled");
+        $("#spawnToggle").css("display", "block");
+    }
+    else {
+        console.log("Random tile spawn disabled");
+        $("#spawnToggle").css("display", "none");
+    }
+});
+
+$("#spawn2").on("change", () => {
+    let checked = $("#spawn2").prop("checked");
+    spawn2 = checked;
+});
+$("#spawn4").on("change", () => {
+    let checked = $("#spawn4").prop("checked");
+    spawn4 = checked;
+});
+$("#spawn8").on("change", () => {
+    let checked = $("#spawn8").prop("checked");
+    spawn8 = checked;
+});
+
+$("#spawn").on("click", () => {
+    placeRandTile(grid);
+    updateStats();
+    drawGrid(grid);
 });

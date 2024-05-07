@@ -92,6 +92,14 @@ body {
   height: 45%;
   margin-bottom: 5%;
   margin-left: 5%;
+  line-height: 150%;
+  margin-right: 15%;
+}
+
+#spawnToggle {
+  width: 50%;
+  text-align: center;
+  float: right;
 }
 
 #size {
