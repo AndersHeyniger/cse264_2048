@@ -8,6 +8,8 @@ const spawn2 = true;
 const spawn4 = true;
 const spawn8 = false;
 const spawnTiles = true;
+const animationTime = 200; // milliseconds
+const emptyGrid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
 let score = 0;
 let highScore = 0;
 let bestTile = 0;
@@ -62,7 +64,7 @@ function drawGrid(grid) {
         for (let j = 0; j < gridSize; j++) {
             let tile = grid[i][j];
             if (tile == 0) {
-                drawSquare(0, i, j);
+                drawTile(0, i, j);
             }
         }
     }
@@ -72,13 +74,13 @@ function drawGrid(grid) {
         for (let j = 0; j < gridSize; j++) {
             let tile = grid[i][j];
             if (tile != 0) {
-                drawSquare(tile, i, j);
+                drawTile(tile, i, j);
             }
         }
     }
 }
 
-function drawSquare(num, row, col) {
+function drawTile(num, row, col) {
     if (num == 0) {
         ctx.fillStyle = "lightgrey";
         ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
@@ -127,6 +129,7 @@ function placeRandTile(grid) {
 $("body").on("keydown", (event) => {
     let change = false;
     key = event.keyCode;
+    //let moves = [];
     if (key >= 37 && key <= 40) {
         copyGrid(oldgrid, grid);
         prevScore = score;
@@ -243,6 +246,7 @@ $("body").on("keydown", (event) => {
         undo();
     }
     if (change) {
+        //slide(moves);
         if (spawnTiles) placeRandTile(grid);
         drawGrid(grid);
         checkGrid(grid);
@@ -252,6 +256,7 @@ $("body").on("keydown", (event) => {
 
 function moveTiles(r1, c1, r2, c2, dir) {
     if (r1 == r2 && c1 == c2) return;
+    //let move = {}; // create move for animated move (unused)
     let toRow = r1;
     let toCol = c1;
     let fromRow = r1;
@@ -280,6 +285,13 @@ function moveTiles(r1, c1, r2, c2, dir) {
         console.log("Error: Invalid move direction");
         return;
     }
+    /*
+    move.newRow = toRow;
+    move.newCol = toCol;
+    move.oldRow = fromRow;
+    move.oldCol = fromCol;
+    move.tile = grid[fromRow][fromCol];
+    */
     //console.log(`Swapping (${toRow}, ${toCol}) (${grid[toRow][toCol]}) and (${fromRow}, ${fromCol}) (${grid[fromRow][fromCol]})`);
     if (grid[toRow][toCol] == grid[fromRow][fromCol]) {
         console.log(`Tiles at (${toRow}, ${toCol}) (${grid[toRow][toCol]}) and (${fromRow}, ${fromCol}) (${grid[fromRow][fromCol]}) combined`);
@@ -298,6 +310,7 @@ function moveTiles(r1, c1, r2, c2, dir) {
         wins++;
         if (wins == 1) win();
     }
+    //return move;
 }
 
 function undo() {
@@ -371,8 +384,38 @@ function checkGrid(grid) {
     }
 }
 
-function slide() {
+function slide(moves) { // start animation (unused)
+    for (let i = 1; i <= animationTime; i++) {
+        requestAnimationFrame(() => step(moves, i));
+    }
+}
 
+function step(moves, frame) { // animate frame (unused)
+    drawGrid(emptyGrid);
+    for (let move of moves) {
+        let r = move.newRow - move.oldRow;
+        let c = move.newCol - move.oldCol;
+        let row, col;
+        if (r == 0) {
+            row = move.newRow;
+            if (c > 0) {
+                col = move.oldCol + (c * frame) / (animationTime + 1);
+            }
+            else {
+                col = move.newCol + (c * frame) / (animationTime + 1);
+            }
+        }
+        else {
+            col = move.newCol;
+            if (r > 0) {
+                row = move.oldRow + (r * frame) / (animationTime + 1);
+            }
+            else {
+                row = move.newRow + (r * frame) / (animationTime + 1);
+            }
+        }
+        drawTile(move.tile, row, col);
+    }
 }
 
 function updateStats() {
@@ -401,4 +444,9 @@ $("#reset").on("click", () => {
     placeRandTile(grid);
     updateStats();
     drawGrid(grid);
+});
+
+$("#main_options form input").on("change", () => {
+    let status = $('input[name=cheat]:checked', '#main_options form').val();
+    alert(status);
 });
