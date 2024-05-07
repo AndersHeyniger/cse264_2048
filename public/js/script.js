@@ -2,29 +2,32 @@ const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
 const canvasDim = canvas.getBoundingClientRect();
 
-let gridSize = $("#size").val();
-let tileSize = canvas.offsetWidth / gridSize;
-let spawn2 = true;
-let spawn4 = true;
-let spawn8 = false;
-let classic = false;
 const animationTime = 200; // milliseconds
 const emptyGrid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
 
+let images;
 let board_img_path = "/img/empty_2048_full.png";
 let border_img_path = "/img/empty_2048_border.png";
 let img_paths = ["/img/tile2.PNG", "/img/tile4.PNG", "/img/tile8.PNG", 
                 "/img/tile16.PNG", "/img/tile32.PNG", "/img/tile64.PNG", "/img/tile128.PNG", 
                 "/img/tile256.PNG", "/img/tile512.PNG", "/img/tile1024.PNG", "/img/tile2048.PNG"];
-let images;
+
+
+let gridSize = $("#size").val();
+let tileSize = canvas.offsetWidth / gridSize;
 
 let spawnTiles = true;
+let spawn2 = true;
+let spawn4 = true;
+let spawn8 = false;
+let classic = false; // when classic mode is on, the game visuals are drawn using images from the original
+                     // game, instead of manually drawn using canvas
 
 let score = 0;
 let highScore = 0;
 let bestTile = 0;
 let wins = 0; // number of 2048 tiles created
-let grid;
+let grid; // primary game grid - 2d array holding values of all tiles on board, including empty ones
 
 let oldgrid; // previous grid for undo
 let prevScore; // previous score for undo
@@ -38,7 +41,7 @@ $(() => {
 
 function init() {
     let img_promises = [];
-    let prom = new Promise((resolve, reject) => {
+    let prom = new Promise((resolve, reject) => { // images must be loaded first
         let img = new Image(canvas.offsetWidth, canvas.offsetHeight);
         img.src = board_img_path;
         img.onload = () => resolve(img);
@@ -95,8 +98,8 @@ function makeGrid() {
 }
 
 function drawGrid(grid) {
-    //ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
-    if (!classic) {
+    if (!classic) { // DISABLED: Classic Mode
+
         // draw empty tiles first
         for (let i = 0; i < gridSize; i++) {
             for (let j = 0; j < gridSize; j++) {
@@ -117,23 +120,20 @@ function drawGrid(grid) {
             }
         }
     }
-    else {
-        ctx.drawImage(images[0], 0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    else { // ENABLED: Classic Mode
+        ctx.drawImage(images[0], 0, 0, canvas.offsetWidth, canvas.offsetHeight); // draw background
         for (let i = 0; i < gridSize; i++) {
             for (let j = 0; j < gridSize; j++) {
                 let tile = grid[i][j];
                 if (tile != 0) {
                     ctx.drawImage(images[tile], j * tileSize, i * tileSize, tileSize, tileSize);
                 }
-                //ctx.strokeStyle = "#bbada0";
-                //ctx.lineWidth = 23;
-                //ctx.strokeRect(j * tileSize, i * tileSize, tileSize, tileSize);
             }
         }
         ctx.strokeStyle = "#b3d4fc";
         ctx.lineWidth = 5;
         ctx.strokeRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
-        ctx.drawImage(images[12], 0, 0, canvas.offsetWidth, canvas.offsetHeight);
+        ctx.drawImage(images[12], 0, 0, canvas.offsetWidth, canvas.offsetHeight); // draw border
     }
 }
 
@@ -482,14 +482,14 @@ function step(moves, frame) { // animate frame (unused)
     }
 }
 
-function updateStats() {
+function updateStats() { // update scoreboard based on current grid
     $("#score").html(score);
     $("#highScore").html(highScore);
     $("#bestTile").html(bestTile);
     $("#numWins").html(wins);
 }
 
-$("#size").on("input", (event) => {
+$("#size").on("input", (event) => { // change grid size when slider is moved
     let oldSize = gridSize;
     gridSize = $("#size").val();
     tileSize = canvas.offsetWidth / gridSize;
@@ -501,7 +501,7 @@ $("#size").on("input", (event) => {
     drawGrid(grid);
 });
 
-$("#reset").on("click", () => {
+$("#reset").on("click", () => { // reset game when reset button is pressed
     score = 0;
     grid = makeGrid();
     oldgrid = makeGrid();
@@ -510,7 +510,7 @@ $("#reset").on("click", () => {
     drawGrid(grid);
 });
 
-$("#cheatsForm input").on("change", () => {
+$("#cheatsForm input").on("change", () => { // show/hide cheats menu
     let status = $('input[name=cheat]:checked', '#cheatsForm').val();
     if (status == "disable") {
         $("#cheats").css("display", "none");
@@ -520,7 +520,7 @@ $("#cheatsForm input").on("change", () => {
     }
 });
 
-$("#spawnCheck").on("change", () => {
+$("#spawnCheck").on("change", () => { // 
     let checked = $("#spawnCheck").prop("checked");
     spawnTiles = checked;
     if (checked) {
@@ -533,6 +533,8 @@ $("#spawnCheck").on("change", () => {
     }
 });
 
+
+// enable/disable random spawning of different tile sizes
 $("#spawn2").on("change", () => {
     let checked = $("#spawn2").prop("checked");
     spawn2 = checked;
@@ -546,13 +548,13 @@ $("#spawn8").on("change", () => {
     spawn8 = checked;
 });
 
-$("#spawn").on("click", () => {
+$("#spawn").on("click", () => { // spawn random tile when spawn button is clicked
     placeRandTile(grid);
     updateStats();
     drawGrid(grid);
 });
 
-$("#classicMode").on("change", () => {
+$("#classicMode").on("change", () => { // toggle classic mode
     let oldSize = gridSize;
     classic = $("#classicMode").prop("checked");
     $("#size").attr("disabled", classic);
