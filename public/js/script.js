@@ -62,11 +62,7 @@ function drawGrid(grid) {
         for (let j = 0; j < gridSize; j++) {
             let tile = grid[i][j];
             if (tile == 0) {
-                ctx.fillStyle = "lightgrey";
-                ctx.fillRect(j * tileSize, i * tileSize, tileSize, tileSize);
-                ctx.strokeStyle = "gray";
-                ctx.lineWidth = 3;
-                ctx.strokeRect(j * tileSize, i * tileSize, tileSize, tileSize);
+                drawSquare(0, i, j);
             }
         }
     }
@@ -76,23 +72,36 @@ function drawGrid(grid) {
         for (let j = 0; j < gridSize; j++) {
             let tile = grid[i][j];
             if (tile != 0) {
-                ctx.fillStyle = "cornflowerblue";
-                ctx.fillRect(j * tileSize, i * tileSize, tileSize, tileSize);
-                ctx.fillStyle = "black";
-                ctx.textAlign = "center";
-                if (tile <= 6) {
-                    ctx.font = tileSize / 2 + "px fantasy";
-                    ctx.fillText(2 ** tile, (j + 0.5) * tileSize, (i + 0.7) * tileSize);
-                }
-                else {
-                    ctx.font = tileSize / 3 + "px fantasy";
-                    ctx.fillText(2 ** tile, (j + 0.5) * tileSize, (i + 0.62) * tileSize);
-                }
-                ctx.strokeStyle = "#3960A8";
-                ctx.lineWidth = 3;
-                ctx.strokeRect(j * tileSize, i * tileSize, tileSize, tileSize);
+                drawSquare(tile, i, j);
             }
         }
+    }
+}
+
+function drawSquare(num, row, col) {
+    if (num == 0) {
+        ctx.fillStyle = "lightgrey";
+        ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
+        ctx.strokeStyle = "gray";
+        ctx.lineWidth = 3;
+        ctx.strokeRect(col * tileSize, row * tileSize, tileSize, tileSize);
+    }
+    else {
+        ctx.fillStyle = "cornflowerblue";
+        ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        if (num <= 6) {
+            ctx.font = tileSize / 2 + "px fantasy";
+            ctx.fillText(2 ** num, (col + 0.5) * tileSize, (row + 0.7) * tileSize);
+        }
+        else {
+            ctx.font = tileSize / 3 + "px fantasy";
+            ctx.fillText(2 ** num, (col + 0.5) * tileSize, (row + 0.62) * tileSize);
+        }
+        ctx.strokeStyle = "#3960A8";
+        ctx.lineWidth = 3;
+        ctx.strokeRect(col * tileSize, row * tileSize, tileSize, tileSize);
     }
 }
 
@@ -360,6 +369,10 @@ function checkGrid(grid) {
         console.log("No more moves can be made, game lost");
         alert("You lose!");
     }
+}
+
+function slide() {
+
 }
 
 function updateStats() {
