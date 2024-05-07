@@ -7,8 +7,16 @@ let tileSize = canvas.offsetWidth / gridSize;
 let spawn2 = true;
 let spawn4 = true;
 let spawn8 = false;
+let classic = true;
 const animationTime = 200; // milliseconds
 const emptyGrid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+
+let board_img_path = "/img/empty_2048_full.png";
+let border_img_path = "/img/empty_2048_border.png";
+let img_paths = ["/img/tile2.PNG", "/img/tile4.PNG", "/img/tile8.PNG", 
+                "/img/tile16.PNG", "/img/tile32.PNG", "/img/tile64.PNG", "/img/tile128.PNG", 
+                "/img/tile256.PNG", "/img/tile512.PNG", "/img/tile1024.PNG", "/img/tile2048.PNG"];
+let images;
 
 let spawnTiles = true;
 
@@ -29,22 +37,50 @@ $(() => {
 });
 
 function init() {
-    grid = makeGrid(grid);
-    oldgrid = makeGrid();
-    if (spawnTiles) placeRandTile(grid);
+    let img_promises = [];
+    let prom = new Promise((resolve, reject) => {
+        let img = new Image(canvas.offsetWidth, canvas.offsetHeight);
+        img.src = board_img_path;
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error("image not loaded"));
+    });
+    img_promises.push(prom);
+    for (let path of img_paths) {
+        let prom = new Promise((resolve, reject) => {
+            let img = new Image(tileSize, tileSize);
+            img.src = path;
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error("image not loaded"));
+        });
+        img_promises.push(prom);
+    }
+    prom = new Promise((resolve, reject) => {
+        let img = new Image(canvas.offsetWidth, canvas.offsetHeight);
+        img.src = border_img_path;
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error("image not loaded"));
+    });
+    img_promises.push(prom);
+    Promise.all(img_promises).then(function (imgs) {
+        images = imgs;
+        grid = makeGrid(grid);
+        oldgrid = makeGrid();
+        if (spawnTiles) placeRandTile(grid);
 
-    //grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
-    //grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
-    //grid = [[2, 1, 1, 3], [3, 1, 1, 2], [2, 0, 1, 1], [0, 0, 0, 1]];
-    //grid = [[0, 0, 0, 0], [4, 3, 1, 2], [2, 0, 1, 0], [2, 0, 2, 0]];
-    //grid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // empty board
-    //grid = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]; // full board
-    //grid = [[10, 10, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // winning board
+        //grid = [[0, 1, 0, 0], [2, 3, 4, 5], [10, 9, 8, 7], [0, 6, 1, 0]];
+        //grid = [[0, 2, 0, 0], [1, 0, 0, 2], [0, 0, 0, 1], [1, 1, 0, 1]];
+        //grid = [[2, 1, 1, 3], [3, 1, 1, 2], [2, 0, 1, 1], [0, 0, 0, 1]];
+        //grid = [[0, 0, 0, 0], [4, 3, 1, 2], [2, 0, 1, 0], [2, 0, 2, 0]];
+        //grid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // empty board
+        //grid = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]; // full board
+        //grid = [[10, 10, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; // winning board
+        
+        copyGrid(oldgrid, grid);
+        drawGrid(grid);
+        updateStats();
+        $("#size_label").html(`Board Size: ${$("#size").val()}`);
+    });
     
-    copyGrid(oldgrid, grid);
-    drawGrid(grid);
-    updateStats();
-    $("#size_label").html(`Board Size: ${$("#size").val()}`);
 }
 
 function makeGrid() {
@@ -59,26 +95,42 @@ function makeGrid() {
 }
 
 function drawGrid(grid) {
-    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    //ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    if (!classic) {
+        // draw empty tiles first
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                let tile = grid[i][j];
+                if (tile == 0) {
+                    drawTile(0, i, j);
+                }
+            }
+        }
 
-    // draw empty tiles first
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
-            let tile = grid[i][j];
-            if (tile == 0) {
-                drawTile(0, i, j);
+        // draw filled tiles next so borders are correct
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                let tile = grid[i][j];
+                if (tile != 0) {
+                    drawTile(tile, i, j);
+                }
             }
         }
     }
-
-    // draw filled tiles next so borders are correct
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
-            let tile = grid[i][j];
-            if (tile != 0) {
-                drawTile(tile, i, j);
+    else {
+        ctx.drawImage(images[0], 0, 0, canvas.offsetWidth, canvas.offsetHeight);
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                let tile = grid[i][j];
+                if (tile != 0) {
+                    ctx.drawImage(images[tile], j * tileSize, i * tileSize, tileSize, tileSize);
+                }
+                //ctx.strokeStyle = "#bbada0";
+                //ctx.lineWidth = 23;
+                //ctx.strokeRect(j * tileSize, i * tileSize, tileSize, tileSize);
             }
         }
+        ctx.drawImage(images[12], 0, 0, canvas.offsetWidth, canvas.offsetHeight);
     }
 }
 
