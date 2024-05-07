@@ -130,6 +130,9 @@ function drawGrid(grid) {
                 //ctx.strokeRect(j * tileSize, i * tileSize, tileSize, tileSize);
             }
         }
+        ctx.strokeStyle = "#b3d4fc";
+        ctx.lineWidth = 5;
+        ctx.strokeRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
         ctx.drawImage(images[12], 0, 0, canvas.offsetWidth, canvas.offsetHeight);
     }
 }
@@ -550,6 +553,16 @@ $("#spawn").on("click", () => {
 });
 
 $("#classicMode").on("change", () => {
+    let oldSize = gridSize;
     classic = $("#classicMode").prop("checked");
+    $("#size").attr("disabled", classic);
+    $("#size").val(4);
+    gridSize = 4;
+    tileSize = canvas.offsetWidth / gridSize;
+    if (classic) $("#size_label").html(`Board Size: ${gridSize} (Grid size cannot be changed in classic mode)`);
+    else $("#size_label").html(`Board Size: ${gridSize}`);
+    resizeGrid(grid, oldSize, gridSize);
+    oldgrid = makeGrid();
+    copyGrid(oldgrid, grid);
     drawGrid(grid);
 });

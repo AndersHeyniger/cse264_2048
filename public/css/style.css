@@ -74,7 +74,7 @@ body {
 #board {
   margin-left: 5%;
   margin-right: 5%;
-  background-color: #fff;
+  background-color: #b3d4fc;
 }
 
 #options {
@@ -92,11 +92,22 @@ body {
   height: 45%;
 }
 
+#main_options>:not(h3) {
+  margin-left:5%;
+}
+
+#reset {
+  width: 20%;
+}
+
+#cheatsForm+label {
+  float: left;
+}
+
 #cheats {
   display: none;
   height: 45%;
   margin-bottom: 5%;
-  margin-left: 5%;
   line-height: 150%;
   margin-right: 15%;
 }
